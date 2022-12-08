@@ -84,7 +84,7 @@ class KernelWebsocketClient:
         self.execution_count: Optional[int] = None
         self.callbacks: callable = []
 
-    async def execute(self, code, wait_for_idle=False) -> Dict[str:Any]:
+    async def execute(self, code, wait_for_idle=False):
         async with aiohttp.ClientSession(
             base_url=self.url,
             headers=self.auth_header,
@@ -120,7 +120,7 @@ class KernelWebsocketClient:
         await ws.send_json(msg)
         return msg["header"]["msg_id"]
 
-    async def process_until_idle(self, ws, message_id) -> Dict[str:Any]:
+    async def process_until_idle(self, ws, message_id):
         while True:
             response = await ws.receive_json()
             if response["parent_header"]["msg_id"] == message_id:
@@ -201,7 +201,7 @@ class KernelWebsocketClient:
         # shell will not tell idled or not
         return False
 
-    def get_result(self) -> Dict[str:Any]:
+    def get_result(self):
         return {"outputs": self.outputs, "execution_count": self.execution_count}
 
     def register_callback(self, callback):
