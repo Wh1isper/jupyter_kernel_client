@@ -84,7 +84,7 @@ class KernelWebsocketClient:
         self.execution_count: Optional[int] = None
         self.callbacks: callable = []
 
-    async def execute(self, code, wait_for_idle=False):
+    async def execute(self, code, wait_for_idle=False) -> Dict[str, Any]:
         """
         :param code(str): code to execute
         :param wait_for_idle(bool): whether send kernel_info_request and wait for idle
@@ -109,7 +109,7 @@ class KernelWebsocketClient:
                 message_id = await self.execute_code(ws, code)
                 return await self.process_until_idle(ws, message_id)
 
-    async def wait_for_idle(self, ws):
+    async def wait_for_idle(self, ws) -> None:
         request_info_msg = self.create_msg("shell", "kernel_info_request")
 
         await ws.send_json(request_info_msg)
@@ -130,7 +130,7 @@ class KernelWebsocketClient:
         await ws.send_json(msg)
         return msg["header"]["msg_id"]
 
-    async def process_until_idle(self, ws, message_id):
+    async def process_until_idle(self, ws, message_id) -> Dict[str, Any]:
         while True:
             response = await ws.receive_json()
             if response["parent_header"]["msg_id"] == message_id:
@@ -189,8 +189,8 @@ class KernelWebsocketClient:
 
         return idled
 
-    def on_iopub(self, msg):
-        # iopub will tell code execute is idled or not
+    def on_iopub(self, msg) -> bool:
+        # iopub will tell execution is idled or not
         content = msg.get("content", dict())
         status = content.get("execution_state")
         msg_type = msg.get("msg_type")
@@ -203,7 +203,7 @@ class KernelWebsocketClient:
             self.execution_count = int(execution_count)
         return False
 
-    def on_shell(self, msg):
+    def on_shell(self, msg) -> False:
         content = msg.get("content", dict())
         execution_count = content.get("execution_count")
         if execution_count:
@@ -211,7 +211,7 @@ class KernelWebsocketClient:
         # shell will not tell idled or not
         return False
 
-    def get_result(self):
+    def get_result(self) -> Dict[str, Any]:
         return {"outputs": self.outputs, "execution_count": self.execution_count}
 
     def register_callback(self, callback):
