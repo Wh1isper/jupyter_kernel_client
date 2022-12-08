@@ -85,6 +85,16 @@ class KernelWebsocketClient:
         self.callbacks: callable = []
 
     async def execute(self, code, wait_for_idle=False):
+        """
+        :param code(str): code to execute
+        :param wait_for_idle(bool): whether send kernel_info_request and wait for idle
+        :return:
+            {
+               "outputs": [nbformat.NotebookNode]
+               "execution_count": int or None
+            }
+        """
+
         async with aiohttp.ClientSession(
             base_url=self.url,
             headers=self.auth_header,
