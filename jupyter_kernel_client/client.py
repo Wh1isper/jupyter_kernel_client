@@ -181,7 +181,8 @@ class KernelWebsocketClient:
         idled = False
         channel = msg["channel"]
         if channel == "shell":
-            idled = self.on_shell(msg)
+            pass
+            # idled = self.on_shell(msg)
         if channel == "iopub":
             idled = self.on_iopub(msg)
         # notify changes
