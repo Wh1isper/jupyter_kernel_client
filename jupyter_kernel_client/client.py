@@ -180,9 +180,6 @@ class KernelWebsocketClient:
     async def process_msg(self, msg):
         idled = False
         channel = msg["channel"]
-        if channel == "shell":
-            pass
-            # idled = self.on_shell(msg)
         if channel == "iopub":
             idled = self.on_iopub(msg)
         # notify changes
@@ -202,14 +199,6 @@ class KernelWebsocketClient:
         execution_count = content.get("execution_count")
         if execution_count:
             self.execution_count = int(execution_count)
-        return False
-
-    def on_shell(self, msg) -> False:
-        content = msg.get("content", dict())
-        execution_count = content.get("execution_count")
-        if execution_count:
-            self.execution_count = int(execution_count)
-        # shell will not tell idled or not
         return False
 
     def get_result(self) -> Dict[str, Any]:
