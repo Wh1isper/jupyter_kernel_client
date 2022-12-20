@@ -72,7 +72,9 @@ class KernelWebsocketClient:
         self.url = f"{proto}://{host}:{port}"
         self.session_id = str(uuid4())
         if not auth_header:
-            auth_header = {"Authorization": f"token {token}"} if token else dict()
+            auth_header = dict()
+        if token:
+            auth_header["Authorization"] = f"token {token}"
         self.auth_header = auth_header
         self.param = {"session_id": self.session_id}
         self.url_path = f"{self.base_url}/api/kernels/{self.kernel_id}/channels"
