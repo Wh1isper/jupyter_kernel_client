@@ -34,6 +34,38 @@ print('hello world')
     }
 
 
+def get_token(jp_auth_header):
+    return jp_auth_header["Authorization"].split(" ")[1]
+
+
+async def test_token_auth(jp_fetch, jp_ws_fetch, jp_auth_header, jp_http_port, jp_base_url):
+    kernel_response = await jp_fetch(
+        "api",
+        "kernels",
+        method="POST",
+        body=json.dumps({"name": "python3", "path": "Untitled.ipynb"}),
+    )
+    kernel_id = json.loads(kernel_response.body)["id"]
+
+    client = KernelWebsocketClient(
+        kernel_id=kernel_id,
+        port=jp_http_port,
+        base_url=jp_base_url,
+        token=get_token(jp_auth_header),
+        encoded=True,
+    )
+
+    code = """
+print('hello world')
+"""
+
+    result = await client.execute(code)
+    assert result == {
+        "execution_count": 1,
+        "outputs": [{"output_type": "stream", "name": "stdout", "text": "hello world\n"}],
+    }
+
+
 async def test_callback(jp_fetch, jp_ws_fetch, jp_auth_header, jp_http_port, jp_base_url):
     kernel_response = await jp_fetch(
         "api",
