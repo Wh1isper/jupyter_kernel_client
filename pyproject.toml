@@ -17,7 +17,6 @@ dynamic = ["version", ]
 test = [
     "mypy",
     "types-setuptools",
-    "jupyter-server <2",
     "pytest",
     "pytest-asyncio",
     "pytest-env",
@@ -25,6 +24,7 @@ test = [
     "websockets",
     "ipykernel",
     "pytest-asyncio",
+    "jupyter_server[test]>=2.0.0a0"
 ]
 
 
